@@ -151,6 +151,26 @@ function registerGUIEvents() {
         var speedDOM = document.getElementById("speed");
         speedDOM.textContent = "Speed: " + speed;
     });
+    addEvent("mousedown", document.getElementById("buttonUp"), function () { Iodine.keyDown('up'); });
+    addEvent("mouseup", document.getElementById("buttonUp"), function () { Iodine.keyUp('up'); });
+    addEvent("mousedown", document.getElementById("buttonDown"), function () { Iodine.keyDown('down'); });
+    addEvent("mouseup", document.getElementById("buttonDown"), function () { Iodine.keyUp('down'); });
+    addEvent("mousedown", document.getElementById("buttonLeft"), function () { Iodine.keyDown('left'); });
+    addEvent("mouseup", document.getElementById("buttonLeft"), function () { Iodine.keyUp('left'); });
+    addEvent("mousedown", document.getElementById("buttonRight"), function () { Iodine.keyDown('right'); });
+    addEvent("mouseup", document.getElementById("buttonRight"), function () { Iodine.keyUp('right'); });
+    addEvent("mousedown", document.getElementById("buttonA"), function () { Iodine.keyDown('a'); });
+    addEvent("mouseup", document.getElementById("buttonA"), function () { Iodine.keyUp('a'); });
+    addEvent("mousedown", document.getElementById("buttonB"), function () { Iodine.keyDown('b'); });
+    addEvent("mouseup", document.getElementById("buttonB"), function () { Iodine.keyUp('b'); });
+    addEvent("mousedown", document.getElementById("buttonStart"), function () { Iodine.keyDown('start'); });
+    addEvent("mouseup", document.getElementById("buttonStart"), function () { Iodine.keyUp('start'); });
+    addEvent("mousedown", document.getElementById("buttonSelect"), function () { Iodine.keyDown('select'); });
+    addEvent("mouseup", document.getElementById("buttonSelect"), function () { Iodine.keyUp('select'); });
+    addEvent("mousedown", document.getElementById("buttonL"), function () { Iodine.keyDown('l'); });
+    addEvent("mouseup", document.getElementById("buttonL"), function () { Iodine.keyUp('l'); });
+    addEvent("mousedown", document.getElementById("buttonR"), function () { Iodine.keyDown('r'); });
+    addEvent("mouseup", document.getElementById("buttonR"), function () { Iodine.keyUp('r'); });
     //setInterval(ExportSave, 60000); //Do periodic saves.
 }
 function resetPlayButton() {
