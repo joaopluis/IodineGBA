@@ -25,13 +25,14 @@ function attachBIOS(BIOS) {
     }
 }
 function attachROM(ROM) {
-    resetPlayButton();
+    //resetPlayButton(); no longer needed with auto-play
     try {
         Iodine.attachROM(new Uint8Array(ROM));
     }
     catch (error) {
         Iodine.attachROM(ROM);
     }
+    romLoaded(); //auto-play
 }
 function fileLoadShimCode(files, ROMHandler) {
     if (typeof files != "undefined") {

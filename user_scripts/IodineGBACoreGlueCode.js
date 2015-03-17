@@ -242,6 +242,11 @@ function lowerVolume() {
 function raiseVolume() {
     Iodine.incrementVolume(0.04);
 }
+function romLoaded() {
+  Iodine.play();
+  this.style.display = "none";
+  document.getElementById("pause").style.display = "inline";
+}
 function writeRedTemporaryText(textString) {
     if (timerID) {
         clearTimeout(timerID);
