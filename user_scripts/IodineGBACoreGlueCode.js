@@ -151,6 +151,7 @@ function registerGUIEvents() {
         var speedDOM = document.getElementById("speed");
         speedDOM.textContent = "Speed: " + speed;
     });
+    //buttons mouse events
     addEvent("mousedown", document.getElementById("buttonUp"), function () { Iodine.keyDown('up'); });
     addEvent("mouseup", document.getElementById("buttonUp"), function () { Iodine.keyUp('up'); });
     addEvent("mousedown", document.getElementById("buttonDown"), function () { Iodine.keyDown('down'); });
@@ -171,6 +172,31 @@ function registerGUIEvents() {
     addEvent("mouseup", document.getElementById("buttonL"), function () { Iodine.keyUp('l'); });
     addEvent("mousedown", document.getElementById("buttonR"), function () { Iodine.keyDown('r'); });
     addEvent("mouseup", document.getElementById("buttonR"), function () { Iodine.keyUp('r'); });
+    //buttons touch events
+    addEvent("touchstart", document.getElementById("buttonA"), function () { console.log('touchstart'); });
+    addEvent("touchend", document.getElementById("buttonA"), function () { console.log('touchsend'); });
+    addEvent("touchenter", document.getElementById("buttonA"), function () { console.log('touchenter'); });
+    addEvent("touchleave", document.getElementById("buttonA"), function () { console.log('touchleave'); });
+    addEvent("touchstart", document.getElementById("buttonUp"), function () { Iodine.keyDown('up'); });
+    addEvent("touchleave", document.getElementById("buttonUp"), function () { Iodine.keyUp('up'); });
+    addEvent("touchstart", document.getElementById("buttonDown"), function () { Iodine.keyDown('down'); });
+    addEvent("touchleave", document.getElementById("buttonDown"), function () { Iodine.keyUp('down'); });
+    addEvent("touchstart", document.getElementById("buttonLeft"), function () { Iodine.keyDown('left'); });
+    addEvent("touchleave", document.getElementById("buttonLeft"), function () { Iodine.keyUp('left'); });
+    addEvent("touchstart", document.getElementById("buttonRight"), function () { Iodine.keyDown('right'); });
+    addEvent("touchleave", document.getElementById("buttonRight"), function () { Iodine.keyUp('right'); });
+    addEvent("touchstart", document.getElementById("buttonA"), function () { Iodine.keyDown('a'); });
+    addEvent("touchleave", document.getElementById("buttonA"), function () { Iodine.keyUp('a'); });
+    addEvent("touchstart", document.getElementById("buttonB"), function () { Iodine.keyDown('b'); });
+    addEvent("touchleave", document.getElementById("buttonB"), function () { Iodine.keyUp('b'); });
+    addEvent("touchstart", document.getElementById("buttonStart"), function () { Iodine.keyDown('start'); });
+    addEvent("touchleave", document.getElementById("buttonStart"), function () { Iodine.keyUp('start'); });
+    addEvent("touchstart", document.getElementById("buttonSelect"), function () { Iodine.keyDown('select'); });
+    addEvent("touchleave", document.getElementById("buttonSelect"), function () { Iodine.keyUp('select'); });
+    addEvent("touchstart", document.getElementById("buttonL"), function () { Iodine.keyDown('l'); });
+    addEvent("touchleave", document.getElementById("buttonL"), function () { Iodine.keyUp('l'); });
+    addEvent("touchstart", document.getElementById("buttonR"), function () { Iodine.keyDown('r'); });
+    addEvent("touchleave", document.getElementById("buttonR"), function () { Iodine.keyUp('r'); });
     //setInterval(ExportSave, 60000); //Do periodic saves.
 }
 function resetPlayButton() {
