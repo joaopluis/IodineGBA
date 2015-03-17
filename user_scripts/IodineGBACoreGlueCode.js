@@ -244,8 +244,8 @@ function raiseVolume() {
 }
 function romLoaded() {
   Iodine.play();
-  this.style.display = "none";
   document.getElementById("pause").style.display = "inline";
+  document.getElementById("play").style.display = "none";
 }
 function writeRedTemporaryText(textString) {
     if (timerID) {
