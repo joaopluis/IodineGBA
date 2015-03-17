@@ -199,6 +199,35 @@ function registerGUIEvents() {
       e.stopPropagation();
 	  return false;
     });
+    
+    var gamepadMap = new Array();
+    gamepadMap["DPAD_UP"] = "up";
+    gamepadMap["DPAD_RIGHT"] = "right";
+    gamepadMap["DPAD_LEFT"] = "left";
+    gamepadMap["DPAD_DOWN"] = "down";
+    gamepadMap["FACE_1"] = "a";
+    gamepadMap["FACE_2"] = "b";
+    gamepadMap["SELECT_BACK"] = "select";
+    gamepadMap["START_FORWARD"] = "start";
+    gamepadMap["LEFT_TOP_SHOULDER"] = "l";
+    gamepadMap["RIGHT_TOP_SHOULDER"] = "r";
+    
+    
+    var gamepad = new Gamepad();
+    
+    gamepad.bind(Gamepad.Event.BUTTON_DOWN, function(e) {
+        console.log(e);
+	Iodine.keyDown(gamepadMap[e.control]);
+    });
+
+    gamepad.bind(Gamepad.Event.BUTTON_UP, function(e) {
+        console.log(e);
+	Iodine.keyUp(gamepadMap[e.control]);
+    });
+    
+    if (!gamepad.init()) {
+        // Your browser does not support gamepads, get the latest Google Chrome or Firefox
+    }
     //setInterval(ExportSave, 60000); //Do periodic saves.
 }
 function resetPlayButton() {
