@@ -75,7 +75,8 @@ function registerGUIEvents() {
             Iodine.disableAudio();
         }
     });
-    document.getElementById("skip_boot").checked = false;
+    document.getElementById("skip_boot").checked = true;
+    Iodine.enableSkipBootROM();
     addEvent("click", document.getElementById("skip_boot"), function () {
              if (this.checked) {
                 Iodine.enableSkipBootROM();
