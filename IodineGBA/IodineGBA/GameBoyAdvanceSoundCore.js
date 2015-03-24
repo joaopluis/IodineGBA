@@ -18,11 +18,9 @@
 function GameBoyAdvanceSound(IOCore) {
     //Build references:
     this.IOCore = IOCore;
-    this.settings = this.IOCore.settings;
     this.coreExposed = this.IOCore.coreExposed;
-    this.initializePAPU();
 }
-GameBoyAdvanceSound.prototype.initializePAPU = function () {
+GameBoyAdvanceSound.prototype.initialize = function () {
     //Did the emulator core initialize us for output yet?
     this.preprocessInitialization(false);
     //Initialize start:
@@ -40,10 +38,10 @@ GameBoyAdvanceSound.prototype.initializeAudioStartState = function () {
     //NOTE: NR 60-63 never get reset in audio halting:
     this.nr60 = 0;
     this.nr61 = 0;
-    this.nr62 = (this.IOCore.BIOSFound && !this.settings.SKIPBoot) ? 0 : 0xFF;
-    this.nr63 = (this.IOCore.BIOSFound && !this.settings.SKIPBoot) ? 0 : 0x2;
-    this.soundMasterEnabled = (!this.IOCore.BIOSFound || this.settings.SKIPBoot);
-    this.mixerSoundBIAS = (this.IOCore.BIOSFound && !this.settings.SKIPBoot) ? 0 : 0x200;
+    this.nr62 = (this.IOCore.BIOSFound && !this.IOCore.settings.SKIPBoot) ? 0 : 0xFF;
+    this.nr63 = (this.IOCore.BIOSFound && !this.IOCore.settings.SKIPBoot) ? 0 : 0x2;
+    this.soundMasterEnabled = (!this.IOCore.BIOSFound || this.IOCore.settings.SKIPBoot);
+    this.mixerSoundBIAS = (this.IOCore.BIOSFound && !this.IOCore.settings.SKIPBoot) ? 0 : 0x200;
     this.channel1 = new GameBoyAdvanceChannel1Synth(this);
     this.channel2 = new GameBoyAdvanceChannel2Synth(this);
     this.channel3 = new GameBoyAdvanceChannel3Synth(this);
