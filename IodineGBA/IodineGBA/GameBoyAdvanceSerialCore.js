@@ -17,7 +17,8 @@
  */
 function GameBoyAdvanceSerial(IOCore) {
     this.IOCore = IOCore;
-    this.multiplayer = new Multiplayer(this);
+    this.multiplayer = document.getElementById('webRTC').checked ?
+        new RTCMultiplayer(this) : new Multiplayer(this);
 }
 GameBoyAdvanceSerial.prototype.initialize = function () {
     this.SIODATA_A = 0xFFFF;
