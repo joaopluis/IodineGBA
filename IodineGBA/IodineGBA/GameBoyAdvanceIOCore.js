@@ -352,6 +352,7 @@ GameBoyAdvanceIO.prototype.deflagTHUMB = function () {
 }
 GameBoyAdvanceIO.prototype.flagIRQ = function () {
     //Flag THUMB CPU mode to step through:
+    //console.log("flag interrupt");
     this.systemStatus = this.systemStatus | 0x8;
 }
 GameBoyAdvanceIO.prototype.deflagIRQ = function () {

@@ -4,6 +4,8 @@
     <title>IodineGBA</title>
     <meta charset="UTF-8">
     <!--Required Scripts-->
+    <script src="user_scripts/multiplayer.js"></script>
+
     <script src="IodineGBA/includes/TypedArrayShim.js"></script>
     <script src="IodineGBA/IodineGBA/GameBoyAdvanceCartridgeCore.js"></script>
     <script src="IodineGBA/IodineGBA/GameBoyAdvanceDMACore.js"></script>
@@ -165,6 +167,19 @@
                             <label>Import:</label><input type="file" id="import" class="files">
                         </div>
                         <a href="./" id="export" target="_new">Export All Saves</a>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div id="mp_controls">
+            <form>
+                <fieldset>
+                    <legend>Multiplayer:</legend>
+                    <div id="mpControls">
+                        <div class="fileLoad">
+                            <label>Nº:</label><input id="nPlayer" type="number" min="1" max="4" step="1"/>
+                            <button id="startMp">Connect</button>
+                        </div>
                     </div>
                 </fieldset>
             </form>

@@ -17,6 +17,7 @@
  */
 function GameBoyAdvanceSerial(IOCore) {
     this.IOCore = IOCore;
+    this.multiplayer = new Multiplayer(this);
 }
 GameBoyAdvanceSerial.prototype.initialize = function () {
     this.SIODATA_A = 0xFFFF;
@@ -29,6 +30,7 @@ GameBoyAdvanceSerial.prototype.initialize = function () {
     this.SIOTransferStarted = false;
     this.SIOMULT_PLAYER_NUMBER = 0;
     this.SIOCOMMERROR = false;
+    this.SIOAllGBAsReady = false;
     this.SIOBaudRate = 0;
     this.SIOCNT_UART_CTS = false;
     this.SIOCNT_UART_MISC = 0;
@@ -57,6 +59,8 @@ GameBoyAdvanceSerial.prototype.initialize = function () {
     this.JOYBUS_STAT = 0;
     this.shiftClocks = 0;
     this.serialBitsShifted = 0;
+
+    this.multiplayer.init(document.getElementById("nPlayer").value);
 }
 GameBoyAdvanceSerial.prototype.SIOMultiplayerBaudRate = [
       9600,
@@ -100,6 +104,7 @@ GameBoyAdvanceSerial.prototype.addClocks = function (clocks) {
 }
 GameBoyAdvanceSerial.prototype.clockSerial = function () {
     //Emulate as if no slaves connected:
+    console.log("SERIAL CLOCK");
     this.serialBitsShifted = ((this.serialBitsShifted | 0) + 1) | 0;
     if ((this.SIOCNT_MODE | 0) == 0) {
         //8-bit
@@ -128,15 +133,27 @@ GameBoyAdvanceSerial.prototype.clockSerial = function () {
     }
 }
 GameBoyAdvanceSerial.prototype.clockMultiplayer = function () {
+    //console.log("natata");
+
+    /*
+    if(!this.SIOTransferStarted){
+        this.SIOTransferStarted = true;
+        this.multiplayer.start();
+    }
+    */
+
     //Emulate as if no slaves connected:
+    /*
     this.SIODATA_A = this.SIODATA8 | 0;
     this.SIODATA_B = 0xFFFF;
     this.SIODATA_C = 0xFFFF;
     this.SIODATA_D = 0xFFFF;
     this.SIOTransferStarted = false;
-    this.SIOCOMMERROR = true;
+    //this.SIOCOMMERROR = true;
+    this.SIOCOMMERROR = false;
+    */
     if ((this.SIOCNT_IRQ | 0) != 0) {
-        //this.IOCore.irq.requestIRQ(0x80);
+        this.IOCore.irq.requestIRQ(0x80);
     }
 }
 GameBoyAdvanceSerial.prototype.clockUART = function () {
@@ -164,6 +181,7 @@ GameBoyAdvanceSerial.prototype.writeSIODATA_A0 = function (data) {
     this.SIODATA_A = (this.SIODATA_A & 0xFF00) | data;
 }
 GameBoyAdvanceSerial.prototype.readSIODATA_A0 = function () {
+    console.log("readin SIODATA_A0 - " + (this.SIODATA_A & 0xFF));
     return this.SIODATA_A & 0xFF;
 }
 GameBoyAdvanceSerial.prototype.writeSIODATA_A1 = function (data) {
@@ -171,6 +189,7 @@ GameBoyAdvanceSerial.prototype.writeSIODATA_A1 = function (data) {
     this.SIODATA_A = (this.SIODATA_A & 0xFF) | (data << 8);
 }
 GameBoyAdvanceSerial.prototype.readSIODATA_A1 = function () {
+    console.log("readin SIODATA_A1 - " + (this.SIODATA_A >> 8));
     return this.SIODATA_A >> 8;
 }
 GameBoyAdvanceSerial.prototype.writeSIODATA_B0 = function (data) {
@@ -178,6 +197,7 @@ GameBoyAdvanceSerial.prototype.writeSIODATA_B0 = function (data) {
     this.SIODATA_B = (this.SIODATA_B & 0xFF00) | data;
 }
 GameBoyAdvanceSerial.prototype.readSIODATA_B0 = function () {
+    console.log("readin SIODATA_B0 - " + (this.SIODATA_B & 0xFF));
     return this.SIODATA_B & 0xFF;
 }
 GameBoyAdvanceSerial.prototype.writeSIODATA_B1 = function (data) {
@@ -185,6 +205,7 @@ GameBoyAdvanceSerial.prototype.writeSIODATA_B1 = function (data) {
     this.SIODATA_B = (this.SIODATA_B & 0xFF) | (data << 8);
 }
 GameBoyAdvanceSerial.prototype.readSIODATA_B1 = function () {
+    console.log("readin SIODATA_B1 - " + (this.SIODATA_B >> 8));
     return this.SIODATA_B >> 8;
 }
 GameBoyAdvanceSerial.prototype.writeSIODATA_C0 = function (data) {
@@ -192,6 +213,7 @@ GameBoyAdvanceSerial.prototype.writeSIODATA_C0 = function (data) {
     this.SIODATA_C = (this.SIODATA_C & 0xFF00) | data;
 }
 GameBoyAdvanceSerial.prototype.readSIODATA_C0 = function () {
+    console.log("readin SIODATA_C0 - " + (this.SIODATA_C & 0xFF));
     return this.SIODATA_C & 0xFF;
 }
 GameBoyAdvanceSerial.prototype.writeSIODATA_C1 = function (data) {
@@ -199,6 +221,7 @@ GameBoyAdvanceSerial.prototype.writeSIODATA_C1 = function (data) {
     this.SIODATA_C = (this.SIODATA_C & 0xFF) | (data << 8);
 }
 GameBoyAdvanceSerial.prototype.readSIODATA_C1 = function () {
+    console.log("readin SIODATA_C1 - " + (this.SIODATA_C >> 8));
     return this.SIODATA_C >> 8;
 }
 GameBoyAdvanceSerial.prototype.writeSIODATA_D0 = function (data) {
@@ -206,6 +229,7 @@ GameBoyAdvanceSerial.prototype.writeSIODATA_D0 = function (data) {
     this.SIODATA_D = (this.SIODATA_D & 0xFF00) | data;
 }
 GameBoyAdvanceSerial.prototype.readSIODATA_D0 = function () {
+    console.log("readin SIODATA_D0 - " + (this.SIODATA_D & 0xFF));
     return this.SIODATA_D & 0xFF;
 }
 GameBoyAdvanceSerial.prototype.writeSIODATA_D1 = function (data) {
@@ -213,9 +237,11 @@ GameBoyAdvanceSerial.prototype.writeSIODATA_D1 = function (data) {
     this.SIODATA_D = (this.SIODATA_D & 0xFF) | (data << 8);
 }
 GameBoyAdvanceSerial.prototype.readSIODATA_D1 = function () {
+    console.log("readin SIODATA_D1 - " + (this.SIODATA_D >> 8));
     return this.SIODATA_D >> 8;
 }
 GameBoyAdvanceSerial.prototype.writeSIOCNT0 = function (data) {
+    //console.log("write SIOCNT0 - "+data);
     if ((this.RCNTMode | 0) < 0x2) {
         switch (this.SIOCNT_MODE | 0) {
             //8-Bit:
@@ -240,16 +266,20 @@ GameBoyAdvanceSerial.prototype.writeSIOCNT0 = function (data) {
             case 2:
                 this.SIOBaudRate = data & 0x3;
                 this.SIOShiftClockDivider = this.SIOMultiplayerBaudRate[this.SIOBaudRate | 0] | 0;
-                this.SIOMULT_PLAYER_NUMBER = (data >> 4) & 0x3;
+                //this.SIOMULT_PLAYER_NUMBER = (data >> 4) & 0x3;
                 this.SIOCOMMERROR = ((data & 0x40) == 0x40);
                 if ((data & 0x80) == 0x80) {
                     if (!this.SIOTransferStarted) {
                         this.SIOTransferStarted = true;
                         if ((this.SIOMULT_PLAYER_NUMBER | 0) == 0) {
+                            
                             this.SIODATA_A = 0xFFFF;
                             this.SIODATA_B = 0xFFFF;
                             this.SIODATA_C = 0xFFFF;
                             this.SIODATA_D = 0xFFFF;
+
+                            this.multiplayer.start();
+  
                         }
                         this.serialBitsShifted = 0;
                         this.shiftClocks = 0;
@@ -269,53 +299,73 @@ GameBoyAdvanceSerial.prototype.writeSIOCNT0 = function (data) {
     }
 }
 GameBoyAdvanceSerial.prototype.readSIOCNT0 = function () {
+    //console.log("read SIOCNT0");
     if (this.RCNTMode < 0x2) {
         switch (this.SIOCNT_MODE) {
             //8-Bit:
             case 0:
             //32-Bit:
             case 1:
+                //console.log(" 32 value - "+(((this.SIOTransferStarted) ? 0x80 : 0) | 0x74 | this.SIOCNT0_DATA));
                 return ((this.SIOTransferStarted) ? 0x80 : 0) | 0x74 | this.SIOCNT0_DATA;
             //Multiplayer:
             case 2:
-                return ((this.SIOTransferStarted) ? 0x80 : 0) | ((this.SIOCOMMERROR) ? 0x40 : 0) | (this.SIOMULT_PLAYER_NUMBER << 4) | this.SIOBaudRate;
+                //console.log(" MP value - "+(((this.SIOTransferStarted) ? 0x80 : 0) | ((this.SIOCOMMERROR) ? 0x40 : 0) | (this.SIOMULT_PLAYER_NUMBER << 4) | this.SIOBaudRate | 0x08 | ((this.SIOMULT_PLAYER_NUMBER == 0) ? 0 : 0x4)));
+                return ((this.SIOTransferStarted) ? 0x80 : 0) | ((this.SIOCOMMERROR) ? 0x40 : 0) | (this.SIOMULT_PLAYER_NUMBER << 4) | this.SIOBaudRate | ((this.SIOAllGBAsReady) ? 0x08 : 0) | ((this.SIOMULT_PLAYER_NUMBER == 0) ? 0 : 0x4);
             //UART:
             case 3:
+                //console.log(" UA value - "+((this.SIOCNT_UART_MISC << 2) | ((this.SIOCNT_UART_FIFO == 4) ? 0x30 : 0x20) | this.SIOBaudRate));
                 return (this.SIOCNT_UART_MISC << 2) | ((this.SIOCNT_UART_FIFO == 4) ? 0x30 : 0x20) | this.SIOBaudRate;
         }
     }
     return 0xFF;
 }
 GameBoyAdvanceSerial.prototype.writeSIOCNT1 = function (data) {
+    //console.log("write SIOCNT1 - " + data);
     this.SIOCNT_IRQ = data & 0x40;
+    var oldMode = this.SIOCNT_MODE;
     this.SIOCNT_MODE = (data >> 4) & 0x3;
+    if(this.SIOCNT_MODE != oldMode) {
+        if (this.SIOCNT_MODE == 0x2) {
+            this.multiplayer.send("READY");
+        } else {
+            this.multiplayer.send("NOTREADY");
+        }
+    }
     this.SIOCNT_UART_RECV_ENABLE = ((data & 0x8) == 0x8);
     this.SIOCNT_UART_SEND_ENABLE = ((data & 0x4) == 0x4);
     this.SIOCNT_UART_PARITY_ENABLE = ((data & 0x2) == 0x2);
     this.SIOCNT_UART_FIFO_ENABLE = ((data & 0x1) == 0x1);
 }
 GameBoyAdvanceSerial.prototype.readSIOCNT1 = function () {
+    //console.log("read SIOCNT1 - "+(0x80 | this.SIOCNT_IRQ | (this.SIOCNT_MODE << 4) | ((this.SIOCNT_UART_RECV_ENABLE) ? 0x8 : 0) |
+    //((this.SIOCNT_UART_SEND_ENABLE) ? 0x4 : 0) | ((this.SIOCNT_UART_PARITY_ENABLE) ? 0x2 : 0) | 0x8 | ((this.SIOCNT_UART_FIFO_ENABLE) ? 0x2 : 0)));
     return (0x80 | this.SIOCNT_IRQ | (this.SIOCNT_MODE << 4) | ((this.SIOCNT_UART_RECV_ENABLE) ? 0x8 : 0) |
-    ((this.SIOCNT_UART_SEND_ENABLE) ? 0x4 : 0) | ((this.SIOCNT_UART_PARITY_ENABLE) ? 0x2 : 0) | ((this.SIOCNT_UART_FIFO_ENABLE) ? 0x2 : 0));
+    ((this.SIOCNT_UART_SEND_ENABLE) ? 0x4 : 0) | ((this.SIOCNT_UART_PARITY_ENABLE) ? 0x2 : 0) | 0x8 | ((this.SIOCNT_UART_FIFO_ENABLE) ? 0x2 : 0));
 }
 GameBoyAdvanceSerial.prototype.writeSIODATA8_0 = function (data) {
     data = data | 0;
+    //console.log("write SIODATA80 - " + data);
     this.SIODATA8 = (this.SIODATA8 & 0xFF00) | data;
     if ((this.RCNTMode | 0) < 0x2 && (this.SIOCNT_MODE | 0) == 3 && this.SIOCNT_UART_FIFO_ENABLE) {
         this.SIOCNT_UART_FIFO = Math.min(((this.SIOCNT_UART_FIFO | 0) + 1) | 0, 4) | 0;
     }
 }
 GameBoyAdvanceSerial.prototype.readSIODATA8_0 = function () {
+    //console.log("read SIODATA80 - " + (this.SIODATA8 & 0xFF));
     return this.SIODATA8 & 0xFF;
 }
 GameBoyAdvanceSerial.prototype.writeSIODATA8_1 = function (data) {
     data = data | 0;
+    //console.log("write SIODATA81 - " + data);
     this.SIODATA8 = (this.SIODATA8 & 0xFF) | (data << 8);
 }
 GameBoyAdvanceSerial.prototype.readSIODATA8_1 = function () {
+    //console.log("read SIODATA81 - " + (this.SIODATA8 >> 8));
     return this.SIODATA8 >> 8;
 }
 GameBoyAdvanceSerial.prototype.writeRCNT0 = function (data) {
+    //console.log("write RCNT0 - "+data);
     if ((this.RCNTMode | 0) == 0x2) {
         //General Comm:
         var oldDataBits = this.RCNTDataBits | 0;
@@ -323,14 +373,16 @@ GameBoyAdvanceSerial.prototype.writeRCNT0 = function (data) {
         this.RCNTDataBitFlow = data >> 4;
         if (this.RCNTIRQ && ((oldDataBits ^ this.RCNTDataBits) & oldDataBits & 0x4) == 0x4) {
             //SI fell low, trigger IRQ:
-            //this.IOCore.irq.requestIRQ(0x80);
+            this.IOCore.irq.requestIRQ(0x80);
         }
     }
 }
 GameBoyAdvanceSerial.prototype.readRCNT0 = function () {
+    //console.log("read RCNT0 - " + (this.RCNTDataBitFlow << 4) | this.RCNTDataBits);
     return (this.RCNTDataBitFlow << 4) | this.RCNTDataBits;
 }
 GameBoyAdvanceSerial.prototype.writeRCNT1 = function (data) {
+    //console.log("write RCNT1 - " + data);
     this.RCNTMode = data >> 6;
     this.RCNTIRQ = ((data & 0x1) == 0x1);
     if ((this.RCNTMode | 0) != 0x2) {
@@ -340,6 +392,7 @@ GameBoyAdvanceSerial.prototype.writeRCNT1 = function (data) {
     }
 }
 GameBoyAdvanceSerial.prototype.readRCNT1 = function () {
+    //console.log("read RCNT1 - " + (this.RCNTMode << 6) | ((this.RCNTIRQ) ? 0x3F : 0x3E))
     return (this.RCNTMode << 6) | ((this.RCNTIRQ) ? 0x3F : 0x3E);
 }
 GameBoyAdvanceSerial.prototype.writeJOYCNT = function (data) {
@@ -411,7 +464,7 @@ GameBoyAdvanceSerial.prototype.writeJOYBUS_STAT = function (data) {
 GameBoyAdvanceSerial.prototype.readJOYBUS_STAT = function () {
     return 0xC5 | this.JOYBUS_STAT;
 }
-/*GameBoyAdvanceSerial.prototype.nextIRQEventTime = function (clocks) {
+GameBoyAdvanceSerial.prototype.nextIRQEventTime = function (clocks) {
     if ((this.SIOCNT_IRQ | 0) != 0 && (this.RCNTMode | 0) < 2) {
         switch (this.SIOCNT_MODE | 0) {
             case 0:
@@ -441,4 +494,4 @@ GameBoyAdvanceSerial.prototype.readJOYBUS_STAT = function () {
     else {
         return -1;
     }
-}*/
+}

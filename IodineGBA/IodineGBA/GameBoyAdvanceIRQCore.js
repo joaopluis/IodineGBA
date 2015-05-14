@@ -30,6 +30,9 @@ GameBoyAdvanceIRQ.prototype.IRQMatch = function () {
 }
 GameBoyAdvanceIRQ.prototype.checkForIRQFire = function () {
     //Tell the CPU core when the emulated hardware is triggering an IRQ:
+    //////console.log("Enabled "+this.interruptsEnabled);
+    //////console.log("Req: "+this.interruptsRequested);
+    //////console.log("IME: "+this.IME);
     this.IOCore.cpu.triggerIRQ((this.interruptsEnabled & this.interruptsRequested) != 0 && this.IME);
 }
 GameBoyAdvanceIRQ.prototype.requestIRQ = function (irqLineToSet) {
@@ -38,45 +41,55 @@ GameBoyAdvanceIRQ.prototype.requestIRQ = function (irqLineToSet) {
     this.checkForIRQFire();
 }
 GameBoyAdvanceIRQ.prototype.writeIME = function (data) {
+    //////console.log("write IME "+data);
     data = data | 0;
     this.IME = ((data & 0x1) == 0x1);
     this.checkForIRQFire();
 }
 GameBoyAdvanceIRQ.prototype.readIME = function () {
+    //////console.log("read IME " + this.IME);
     return (this.IME ? 1 : 0);
 }
 GameBoyAdvanceIRQ.prototype.writeIE0 = function (data) {
+    //////console.log("write IE0 "+data);
     data = data | 0;
     this.interruptsEnabled &= 0x3F00;
     this.interruptsEnabled |= data | 0;
     this.checkForIRQFire();
 }
 GameBoyAdvanceIRQ.prototype.readIE0 = function () {
+    //////console.log("read IE0 " + (this.interruptsEnabled & 0xFF));
     return this.interruptsEnabled & 0xFF;
 }
 GameBoyAdvanceIRQ.prototype.writeIE1 = function (data) {
+    //////console.log("write IE1 " + data);
     data = data | 0;
     this.interruptsEnabled &= 0xFF;
     this.interruptsEnabled |= (data << 8) & 0x3F00;
     this.checkForIRQFire();
 }
 GameBoyAdvanceIRQ.prototype.readIE1 = function () {
+    //////console.log("read IE1 " + (this.interruptsEnabled >> 8));
     return this.interruptsEnabled >> 8;
 }
 GameBoyAdvanceIRQ.prototype.writeIF0 = function (data) {
+    //////console.log("write IF0 "+ data);
     data = data | 0;
     this.interruptsRequested &= ~data;
     this.checkForIRQFire();
 }
 GameBoyAdvanceIRQ.prototype.readIF0 = function () {
+    //////console.log("read IF0 "+ (this.interruptsRequested & 0xFF) );
     return this.interruptsRequested & 0xFF;
 }
 GameBoyAdvanceIRQ.prototype.writeIF1 = function (data) {
+    //////console.log("write IF1 "+ data);
     data = data | 0;
     this.interruptsRequested &= ~(data << 8);
     this.checkForIRQFire();
 }
 GameBoyAdvanceIRQ.prototype.readIF1 = function () {
+    //////console.log("read IF1 "+ (this.interruptsRequested >> 8) );
     return this.interruptsRequested >> 8;
 }
 GameBoyAdvanceIRQ.prototype.nextEventTime = function () {
@@ -88,7 +101,7 @@ GameBoyAdvanceIRQ.prototype.nextEventTime = function () {
     clocks = this.findClosestEvent(clocks | 0, this.IOCore.timer.nextTimer1IRQEventTime() | 0, 0x10) | 0;
     clocks = this.findClosestEvent(clocks | 0, this.IOCore.timer.nextTimer2IRQEventTime() | 0, 0x20) | 0;
     clocks = this.findClosestEvent(clocks | 0, this.IOCore.timer.nextTimer3IRQEventTime() | 0, 0x40) | 0;
-    //clocks = this.findClosestEvent(clocks | 0, this.IOCore.serial.nextIRQEventTime() | 0, 0x80) | 0;
+    clocks = this.findClosestEvent(clocks | 0, this.IOCore.serial.nextIRQEventTime() | 0, 0x80) | 0;
     clocks = this.findClosestEvent(clocks | 0, this.IOCore.dma.channels[0].nextIRQEventTime() | 0, 0x100) | 0;
     clocks = this.findClosestEvent(clocks | 0, this.IOCore.dma.channels[1].nextIRQEventTime() | 0, 0x200) | 0;
     clocks = this.findClosestEvent(clocks | 0, this.IOCore.dma.channels[2].nextIRQEventTime() | 0, 0x400) | 0;
