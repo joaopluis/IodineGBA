@@ -1,5 +1,4 @@
 function RTCSocket(id) {
-    console.log("RTCSocket created");
     this.connA = null;
     this.connB = null;
     this.id = id;
