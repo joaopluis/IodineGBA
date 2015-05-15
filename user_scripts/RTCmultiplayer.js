@@ -1,9 +1,13 @@
 /** @param {GameBoyAdvanceSerial} serial */
+
+//Iodine.IOCore.serial.multiplayer
+
 function RTCMultiplayer(serial) {
     console.log("RTCMultiplayer loaded");
     this.serial = serial;
     this.gbaData = ["", null, null, null, null];
     window.multiplayerLog = []; //FIXME: debug only
+    this.ready = [false, false, false, false];
 }
 
 RTCMultiplayer.prototype.updateData = function () {
@@ -55,8 +59,8 @@ RTCMultiplayer.prototype.start = function () {
 };
 
 RTCMultiplayer.prototype.send = function (msg) {
-    if (msg.match(/ALLREADY/)) return;
     this.socket.send(msg);
+    this.socket.onmessage(this.playerId + ' ' + msg);
 };
 
 RTCMultiplayer.prototype.init = function (nPlayer) {
@@ -69,7 +73,7 @@ RTCMultiplayer.prototype.init = function (nPlayer) {
             var message = msg.split(" ");
             
             if (message[1] == "WRITE") {
-                this.gbaData = ["", null, null, null, null];
+                mp.gbaData = ["", null, null, null, null];
                 mp.serial.SIOTransferStarted = true;
                 //var data = mp.serial.readSIODATA8_1() | 0;
                 //data = data << 8;
@@ -84,6 +88,12 @@ RTCMultiplayer.prototype.init = function (nPlayer) {
             } else if (message[1] == "SEND") {
                 mp.gbaData[message[0]] = Number(message[2]);
                 mp.updateData(); //fixme (only works with 2)
+            } else if (message[1] == "READY") {
+                mp.ready[message[0] - 1] = true;
+                if (mp.ready[0] && mp.ready[1]) mp.serial.SIOAllGBAsReady = true;
+            } else if (message[1] == "NOTREADY") {
+                mp.ready[message[0] - 1] = false;
+                if (!mp.ready[0] || !mp.ready[1]) mp.serial.SIOAllGBAsReady = false;
             }
         };
         this.serial.RCNTDataBits = this.serial.RCNTDataBits | 0x2;
